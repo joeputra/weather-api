@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:weather_app_api/model/weather_forecast_model.dart';
 
 import '../constants.dart';
+import '../network/network.dart';
 
 class WeatherForecast extends StatefulWidget {
   const WeatherForecast({super.key});
@@ -13,6 +14,18 @@ class WeatherForecast extends StatefulWidget {
 }
 
 class _WeatherForecastState extends State<WeatherForecast> {
+  late Future<WeatherForecastModel> forecastObject;
+  String _cityName = "Jakarta";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    forecastObject = Network().getWeatherForecast(cityName: _cityName);
+
+    forecastObject.then((weather) => {print(weather.weather![0].description)});
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
