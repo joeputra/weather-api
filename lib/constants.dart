@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 TextStyle appTitleStyle(Size size) => GoogleFonts.ubuntu(
-      fontSize: size.height * 0.060,
+      fontSize: size.height * 0.040,
       fontWeight: FontWeight.bold,
     );
 TextStyle appSubtitleStyle(Size size) => GoogleFonts.ubuntu(

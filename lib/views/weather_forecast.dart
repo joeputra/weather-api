@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, non_constant_identifier_names, unnecessary_new
 
 import 'package:flutter/material.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
@@ -7,6 +7,7 @@ import 'package:weather_app_api/model/weather_forecast_model.dart';
 
 import '../constants.dart';
 import '../network/network.dart';
+import 'mid_view.dart';
 
 class WeatherForecast extends StatefulWidget {
   const WeatherForecast({super.key});
@@ -17,18 +18,17 @@ class WeatherForecast extends StatefulWidget {
 
 class _WeatherForecastState extends State<WeatherForecast> {
   late Future<WeatherForecastModel> forecastObject;
-  final String _cityName = "Jakarta";
+  String _cityName = "Jakarta";
 
   @override
   void initState() {
     // ignore: todo
     // TODO: implement initState
     super.initState();
-    forecastObject = Network().getWeatherForecast(cityName: _cityName);
+    forecastObject = getWeather(_cityName);
 
     // ignore: avoid_print
-    forecastObject
-        .then((weather) => {print(weather.list![0].weather![0].main)});
+    // forecastObject.then((weather) => {print(weather.city!.name)});
   }
 
   @override
@@ -61,33 +61,40 @@ class _WeatherForecastState extends State<WeatherForecast> {
                 padding: const EdgeInsets.only(left: 20),
                 child: Text(
                   "Weather App",
-                  style: appSubtitleStyle(size),
+                  style: appTitleStyle(size),
                 ),
               ),
               SizedBox(
                 height: size.height * 0.02,
               ),
+              //Here Widget's
               FormFieldText(),
-              Container(
-                  child: FutureBuilder(
-                future: forecastObject,
-                builder: (BuildContext context,
-                    AsyncSnapshot<WeatherForecastModel> snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        // midView(snapshot),
-                      ],
-                    );
-                  } else {
-                    return Container(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                },
-              ))
+
+              Center(
+                child: Container(
+                    child: FutureBuilder(
+                  future: forecastObject,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<WeatherForecastModel> snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: [
+                          midView(snapshot),
+                        ],
+                      );
+                    } else {
+                      return Container(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                )),
+              ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
             ],
           ),
         ),
@@ -110,9 +117,18 @@ class _WeatherForecastState extends State<WeatherForecast> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
+                onFieldSubmitted: (value) {
+                  setState(() {
+                    _cityName = value;
+                    forecastObject = getWeather(_cityName);
+                  });
+                },
               )
             ],
           )),
     );
   }
+
+  Future<WeatherForecastModel> getWeather(String cityName) =>
+      new Network().getWeatherForecast(cityName: _cityName);
 }
